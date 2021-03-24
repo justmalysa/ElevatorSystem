@@ -8,12 +8,14 @@
 
 void elevator_init(void);
 
-int elevator_call(int user_floor, int direction);
+void elevator_call(int user_floor, int direction);
 
-void elevator_ride(int elev_index, int target_floor);
+bool elevator_ride(int elev_index, int target_floor);
 
 void elevator_step(void);
 
 bool elevator_floor_reached_check(int elev_index);
+
+bool elevator_on_floor_check(int floor);
 
 #endif /* ELEVATOR_H */
