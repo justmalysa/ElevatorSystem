@@ -10,6 +10,7 @@ struct elevator_status
 {
     int current_floor;
     int target_floor;
+    int last_reached_floor;
     bool requested_floors[NUMBER_OF_FLOORS];
 };
 
@@ -38,10 +39,28 @@ bool elevator_ride(int user_floor, int target_floor)
     for (size_t i = 0; i < NUMBER_OF_ELEVATORS; i++)
     {
         struct elevator_status * p_elev = &elevator_arr[i];
-        if ((p_elev->target_floor == user_floor) && (p_elev->current_floor == p_elev->target_floor))
+
+        int elev_direction = p_elev->target_floor - p_elev->current_floor;
+
+        bool is_on_user_floor = p_elev->current_floor == user_floor;
+
+        bool is_idle = (elev_direction == 0);
+
+        bool is_target_floor_further =
+            (p_elev->target_floor < target_floor && (elev_direction > 0)) ||
+            (p_elev->target_floor > target_floor && (elev_direction < 0));
+
+        bool is_same_direction = ((target_floor > user_floor) && (elev_direction > 0)) ||
+                                 ((target_floor < user_floor) && (elev_direction < 0));
+
+        if (is_on_user_floor && (is_same_direction || is_idle))
         {
+            if (is_target_floor_further || is_idle)
+            {
+                p_elev->target_floor = target_floor;
+            }
             p_elev->requested_floors[target_floor] = true;
-            p_elev->target_floor = target_floor;
+            floor_arr[user_floor].is_requested = false;
             return true;
         }
     }
@@ -74,7 +93,8 @@ void elevator_step(void)
 
                 bool is_idle = (p_elev->target_floor == p_elev->current_floor);
 
-                if ((difference < min_difference) && ((is_on_the_way_current && is_on_the_way_target) || is_idle))
+                if ((difference < min_difference) &&
+                    ((is_on_the_way_current && is_on_the_way_target) || is_idle))
                 {
                     min_difference = difference;
                     elev_index = i;
@@ -83,15 +103,27 @@ void elevator_step(void)
 
             if (min_difference < NUMBER_OF_FLOORS + 1)
             {
-                elevator_arr[elev_index].target_floor = floor_idx;
+                int elev_direction =
+                    elevator_arr[elev_index].target_floor - elevator_arr[elev_index].current_floor;
+
+                bool is_floor_idx_further =
+                    ((floor_idx > elevator_arr[elev_index].target_floor) && (elev_direction > 0)) ||
+                    ((floor_idx < elevator_arr[elev_index].target_floor) && (elev_direction < 0));
+
+                bool is_idle = (elev_direction == 0);
+
+                if (is_floor_idx_further || is_idle)
+                {
+                    elevator_arr[elev_index].target_floor = floor_idx;
+                }
                 elevator_arr[elev_index].requested_floors[floor_idx] = true;
             }
         }
     }
 
-    for (size_t i = 0; i<NUMBER_OF_ELEVATORS; i++)
+    for (size_t elev_idx = 0; elev_idx < NUMBER_OF_ELEVATORS; elev_idx++)
     {
-        struct elevator_status * p_elev = &elevator_arr[i];
+        struct elevator_status * p_elev = &elevator_arr[elev_idx];
         if (p_elev->current_floor > p_elev->target_floor)
         {
             p_elev->current_floor--;
@@ -101,13 +133,10 @@ void elevator_step(void)
             p_elev->current_floor++;
         }
 
-        if (p_elev->current_floor == p_elev->target_floor)
+        if (p_elev->requested_floors[p_elev->current_floor])
         {
             p_elev->requested_floors[p_elev->current_floor] = false;
-            if (floor_arr[p_elev->current_floor].is_requested)
-            {
-                floor_arr[p_elev->current_floor].is_requested = false;
-            }
+            p_elev->last_reached_floor = p_elev->current_floor;
         }
     }
 }
@@ -123,7 +152,7 @@ bool elevator_on_floor_check(int floor)
     for (size_t i = 0; i < NUMBER_OF_ELEVATORS; i++)
     {
         struct elevator_status * p_elev = &elevator_arr[i];
-        if ((p_elev->target_floor == floor) && (p_elev->current_floor == p_elev->target_floor))
+        if ((p_elev->last_reached_floor == floor) && (p_elev->current_floor == floor))
         {
             return true;
         }
