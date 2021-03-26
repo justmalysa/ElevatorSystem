@@ -9,6 +9,11 @@ void tearDown(void)
 {
 }
 
+/**
+ * @brief Function for checking @ref elevator_init() function.
+ *
+ * Test initializes elevator system and check if all internal variable are zero.
+ */
 void test_elevator_init(void)
 {
     struct elevator_status test_arr[NUMBER_OF_ELEVATORS];
@@ -18,6 +23,11 @@ void test_elevator_init(void)
     TEST_ASSERT_EQUAL(result, 0);
 }
 
+/**
+ * @brief Function for checking @ref elevator_call() function.
+ *
+ * Test calls an elevator and checks whether internal variables are correctly updated.
+ */
 void test_elevator_call(void)
 {
     int test_user_floor = 4;
@@ -29,6 +39,12 @@ void test_elevator_call(void)
     TEST_ASSERT_EQUAL(floor_arr[test_user_floor].direction, test_direction);
 }
 
+/**
+ * @brief Function for checking @ref elevator_ride() function.
+ *
+ * Test attempts to use an elevator on ground and first floor,
+ * then checks whether the operation was successful or not.
+ */
 void test_elevator_ride(void)
 {
     int test_user_floor = 0;
@@ -42,21 +58,12 @@ void test_elevator_ride(void)
     TEST_ASSERT_FALSE(elevator_ride(test_user_floor, test_target_floor + 1));
 }
 
-void test_elevator_step(void)
-{
-    elevator_init();
-    elevator_step();
-    /* Nothing to expect */
-}
-
-void test_elevator_floor_reached_check(void)
-{
-    int test_elev_index = 7;
-
-    elevator_init();
-    TEST_ASSERT(elevator_floor_reached_check(test_elev_index));
-}
-
+/**
+ * @brief Function for checking elevator operation after being called.
+ *
+ * Test calls the elevator to 4th floor and expects the elevator
+ * to reach the floor after four simulation steps.
+ */
 void test_one_elevator_call_without_ride(void)
 {
     int test_user_floor = 4;
@@ -75,6 +82,13 @@ void test_one_elevator_call_without_ride(void)
     TEST_ASSERT_TRUE(elevator_on_floor_check(test_user_floor));
 }
 
+/**
+ * @brief Function for checking elevator operation for call and ride.
+ *
+ * Test calls the elevator to 4th floor and expects the elevator
+ * to reach the floor after four simulation steps.
+ * Then the elevator is used to travel to 6th floor.
+ */
 void test_one_elevator_with_default_values(void)
 {
     int test_user_floor = 4;
@@ -99,6 +113,12 @@ void test_one_elevator_with_default_values(void)
     TEST_ASSERT_TRUE(elevator_on_floor_check(test_user_target_floor));
 }
 
+/**
+ * @brief Function for checking three elevators operation for call and ride.
+ *
+ * Test calls three elevators to specified floors.
+ * After arrival, elevators are used to travel to floors chosen by the users.
+ */
 void test_three_elevators_with_default_values(void)
 {
     int test_user_floor_1 = 0;
@@ -160,6 +180,13 @@ void test_three_elevators_with_default_values(void)
     TEST_ASSERT_TRUE(elevator_on_floor_check(test_user_target_floor_2));
 }
 
+/**
+ * @brief Function for checking elevator operation for call and ride with non-ground starting floor.
+ *
+ * Test calls the elevator to 5th floor and expects the elevator
+ * to reach the floor after five simulation steps.
+ * Then the elevator is used to travel to 7th floor.
+ */
 void test_one_elevator_with_preset_values(void)
 {
     int test_user_floor = 5;
@@ -184,6 +211,12 @@ void test_one_elevator_with_preset_values(void)
     TEST_ASSERT_TRUE(elevator_on_floor_check(test_user_target_floor));
 }
 
+/**
+ * @brief Function for checking two elevators operation for call and ride with non-ground starting floor.
+ *
+ * Test calls two elevators to specified floors.
+ * After arrival, elevators are used to travel to floors chosen by the users.
+ */
 void test_two_elevators_with_preset_values(void)
 {
     int test_user_floor_1 = 8;
@@ -253,8 +286,6 @@ int main(void)
     RUN_TEST(test_elevator_init);
     RUN_TEST(test_elevator_call);
     RUN_TEST(test_elevator_ride);
-    RUN_TEST(test_elevator_step);
-    RUN_TEST(test_elevator_floor_reached_check);
     RUN_TEST(test_one_elevator_call_without_ride);
     RUN_TEST(test_one_elevator_with_default_values);
     RUN_TEST(test_three_elevators_with_default_values);

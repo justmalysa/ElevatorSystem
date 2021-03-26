@@ -4,12 +4,28 @@
 #include <elevator.h>
 #include <string.h>
 
+/**
+ * @brief Type describing pointer to a function used for validating user input.
+ *
+ * @param[in]  input  Pointer to the array of chars, representing user input.
+ * @param[out] output Pointer to memory to be filled with parsed data.
+ *
+ * @return True if user input was correct, false otherwise.
+ */
 typedef bool (* input_validator_t)(void * input, void * output);
 
+/**
+ * @brief Function for validating user input that regards elevator operation choice.
+ *
+ * @param[in]  input  Pointer to the array of chars, representing user input.
+ * @param[out] output Pointer to memory to be filled with parsed data.
+ *
+ * @return True if user input was correct, false otherwise.
+ */
 static bool operation_validator(void * input, void * output)
 {
     char * p_char = input;
-    if ((*p_char == 'c') || (*p_char == 'e') || (*p_char == 's'))
+    if ((*p_char == 'c') || (*p_char == 'e') || (*p_char == 's') || (*p_char == 'p'))
     {
         *(char *)output = *p_char;
         return true;
@@ -20,6 +36,14 @@ static bool operation_validator(void * input, void * output)
     }
 }
 
+/**
+ * @brief Function for validating user input that regards elevator direction choice.
+ *
+ * @param[in]  input  Pointer to the array of chars, representing user input.
+ * @param[out] output Pointer to memory to be filled with parsed data.
+ *
+ * @return True if user input was correct, false otherwise.
+ */
 static bool direction_validator(void * input, void * output)
 {
     char * p_char = input;
@@ -34,6 +58,14 @@ static bool direction_validator(void * input, void * output)
     }
 }
 
+/**
+ * @brief Function for validating user input that regards floor choice.
+ *
+ * @param[in]  input  Pointer to the array of chars, representing user input.
+ * @param[out] output Pointer to memory to be filled with parsed data.
+ *
+ * @return True if user input was correct, false otherwise.
+ */
 static bool floor_validator(void * input, void * output)
 {
     int floor = atoi((const char *)input);
@@ -48,6 +80,13 @@ static bool floor_validator(void * input, void * output)
     }
 }
 
+/**
+ * @brief Function for getting and validating user input.
+ *
+ * @param[in]  prompt    Pointer to the array of chars, representing prompt message.
+ * @param[out] output    Pointer to memory to be filled with parsed input data.
+ * @param[in]  validator Pointer to the function to be used to validate the user input.
+ */
 static void input_get_and_validate(char const * prompt, void * output, input_validator_t validator)
 {
     bool status = false;
@@ -67,6 +106,7 @@ static void input_get_and_validate(char const * prompt, void * output, input_val
     }
 }
 
+/** @brief Function showing status of all of the elevators. */
 static void show_elevators_status(void)
 {
     printf("Elevator:       Current floor:  Target floor:\n");
@@ -87,7 +127,8 @@ void elevator_cli_start(void)
         char * operation_prompt = "What are you going to do?\n"
                                   "If you want to call the elevator type 'c'\n"
                                   "If you want to enter the elevator type 'e'\n"
-                                  "If you want to advance the simulation by one step type 's'\n";
+                                  "If you want to advance the simulation by one step type 's'\n"
+                                  "If you want to print elevators status type 'p'\n";
         input_get_and_validate(operation_prompt, &operation, operation_validator);
 
         printf("Operation: %c\n", operation);
@@ -130,14 +171,17 @@ void elevator_cli_start(void)
             }
             else
             {
-                printf("There is no elevator on your floor\n");
-                printf("Look at the list of elevators\n");
+                printf("There is no elevator on your floor\n"
+                       "Look at the list of elevators:\n");
                 show_elevators_status();
             }
         }
         else if (operation == 's')
         {
             elevator_step();
+        }
+        else if (operation == 'p')
+        {
             show_elevators_status();
         }
     }
