@@ -3,9 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define DIR_UP   1
-#define DIR_DOWN 0
-
 struct elevator_status
 {
     int current_floor;
@@ -18,10 +15,21 @@ struct floor_status
 {
     int direction;
     bool is_requested;
+    bool is_assigned_elevator;
 };
 
 struct elevator_status elevator_arr[NUMBER_OF_ELEVATORS];
 struct floor_status floor_arr[NUMBER_OF_FLOORS];
+
+int get_elevator_current_floor(int floor_number)
+{
+    return elevator_arr[floor_number].current_floor;
+}
+
+int get_elevator_target_floor(int floor_number)
+{
+    return elevator_arr[floor_number].target_floor;
+}
 
 void elevator_init(void)
 {
@@ -31,6 +39,7 @@ void elevator_init(void)
 void elevator_call(int user_floor, int direction)
 {
     floor_arr[user_floor].is_requested = true;
+    floor_arr[user_floor].is_assigned_elevator = false;
     floor_arr[user_floor].direction = direction;
 }
 
@@ -73,7 +82,7 @@ void elevator_step(void)
     {
         struct floor_status * p_floor = &floor_arr[floor_idx];
 
-        if (p_floor->is_requested)
+        if (p_floor->is_requested && !(p_floor->is_assigned_elevator))
         {
             int min_difference = NUMBER_OF_FLOORS + 1;
             int elev_index = 0;
@@ -117,6 +126,7 @@ void elevator_step(void)
                     elevator_arr[elev_index].target_floor = floor_idx;
                 }
                 elevator_arr[elev_index].requested_floors[floor_idx] = true;
+                floor_arr[elevator_arr[elev_index].target_floor].is_assigned_elevator = true;
             }
         }
     }
