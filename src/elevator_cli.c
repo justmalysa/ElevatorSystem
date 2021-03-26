@@ -68,10 +68,10 @@ static bool direction_validator(void * input, void * output)
  */
 static bool floor_validator(void * input, void * output)
 {
-    int floor = atoi((const char *)input);
+    ES_INT floor = atoi((const char *)input);
     if ((floor <= NUMBER_OF_FLOORS) && (floor >= 0))
     {
-        *(int *)output = floor;
+        *(ES_INT *)output = floor;
         return true;
     }
     else
@@ -110,7 +110,7 @@ static void input_get_and_validate(char const * prompt, void * output, input_val
 static void show_elevators_status(void)
 {
     printf("Elevator:       Current floor:  Target floor:\n");
-    for (size_t i = 0; i<NUMBER_OF_ELEVATORS; i++)
+    for (ES_SIZE_T i = 0; i<NUMBER_OF_ELEVATORS; i++)
     {
         printf("%8d %16d %16d\n", i, get_elevator_current_floor(i), get_elevator_target_floor(i));
     }
@@ -142,7 +142,7 @@ void elevator_cli_start(void)
 
             printf("Direction: %c\n", direction);
 
-            int current_floor;
+            ES_INT current_floor;
             char * current_floor_prompt = "Enter the floor you are on\n";
             input_get_and_validate(current_floor_prompt, &current_floor, floor_validator);
 
@@ -152,7 +152,7 @@ void elevator_cli_start(void)
         }
         else if (operation == 'e')
         {
-            int current_floor;
+            ES_INT current_floor;
             char * current_floor_prompt = "Enter the floor you are on\n";
             input_get_and_validate(current_floor_prompt, &current_floor, floor_validator);
 
@@ -161,7 +161,7 @@ void elevator_cli_start(void)
             bool is_elev_on_current_floor = elevator_on_floor_check(current_floor);
             if (is_elev_on_current_floor)
             {
-                int target_floor;
+                ES_INT target_floor;
                 char * target_floor_prompt = "Enter the floor you want to be on\n";
                 input_get_and_validate(target_floor_prompt, &target_floor, floor_validator);
 

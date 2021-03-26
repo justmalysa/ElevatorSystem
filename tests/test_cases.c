@@ -19,7 +19,7 @@ void test_elevator_init(void)
     struct elevator_status test_arr[NUMBER_OF_ELEVATORS];
     memset(test_arr, 0, sizeof(test_arr));
     elevator_init();
-    int result = memcmp(elevator_arr, test_arr, sizeof(elevator_arr));
+    ES_INT result = memcmp(elevator_arr, test_arr, sizeof(elevator_arr));
     TEST_ASSERT_EQUAL(result, 0);
 }
 
@@ -30,8 +30,8 @@ void test_elevator_init(void)
  */
 void test_elevator_call(void)
 {
-    int test_user_floor = 4;
-    int test_direction = DIR_UP;
+    ES_INT test_user_floor = 4;
+    ES_INT test_direction = DIR_UP;
 
     elevator_init();
     elevator_call(test_user_floor, test_direction);
@@ -47,8 +47,8 @@ void test_elevator_call(void)
  */
 void test_elevator_ride(void)
 {
-    int test_user_floor = 0;
-    int test_target_floor = 1;
+    ES_INT test_user_floor = 0;
+    ES_INT test_target_floor = 1;
 
     elevator_init();
     TEST_ASSERT_TRUE(elevator_ride(test_user_floor, test_target_floor));
@@ -66,9 +66,9 @@ void test_elevator_ride(void)
  */
 void test_one_elevator_call_without_ride(void)
 {
-    int test_user_floor = 4;
-    int test_direction = DIR_UP;
-    int elev_index;
+    ES_INT test_user_floor = 4;
+    ES_INT test_direction = DIR_UP;
+    ES_INT elev_index;
 
     elevator_init();
     elevator_call(test_user_floor, test_direction);
@@ -91,9 +91,9 @@ void test_one_elevator_call_without_ride(void)
  */
 void test_one_elevator_with_default_values(void)
 {
-    int test_user_floor = 4;
-    int test_user_target_floor = 6;
-    int test_direction = DIR_UP;
+    ES_INT test_user_floor = 4;
+    ES_INT test_user_target_floor = 6;
+    ES_INT test_direction = DIR_UP;
 
     elevator_init();
     elevator_call(test_user_floor, test_direction);
@@ -121,17 +121,17 @@ void test_one_elevator_with_default_values(void)
  */
 void test_three_elevators_with_default_values(void)
 {
-    int test_user_floor_1 = 0;
-    int test_user_target_floor_1 = 5;
-    int test_direction_1 = DIR_UP;
+    ES_INT test_user_floor_1 = 0;
+    ES_INT test_user_target_floor_1 = 5;
+    ES_INT test_direction_1 = DIR_UP;
 
-    int test_user_floor_2 = 9;
-    int test_user_target_floor_2 = 6;
-    int test_direction_2 = DIR_DOWN;
+    ES_INT test_user_floor_2 = 9;
+    ES_INT test_user_target_floor_2 = 6;
+    ES_INT test_direction_2 = DIR_DOWN;
 
-    int test_user_floor_3 = 7;
-    int test_user_target_floor_3 = 4;
-    int test_direction_3 = DIR_DOWN;
+    ES_INT test_user_floor_3 = 7;
+    ES_INT test_user_target_floor_3 = 4;
+    ES_INT test_direction_3 = DIR_DOWN;
 
     elevator_init();
 
@@ -189,9 +189,9 @@ void test_three_elevators_with_default_values(void)
  */
 void test_one_elevator_with_preset_values(void)
 {
-    int test_user_floor = 5;
-    int test_user_target_floor = 7;
-    int test_direction = DIR_UP;
+    ES_INT test_user_floor = 5;
+    ES_INT test_user_target_floor = 7;
+    ES_INT test_direction = DIR_UP;
 
     elevator_init();
     elevator_arr[2].current_floor = 4;
@@ -219,13 +219,13 @@ void test_one_elevator_with_preset_values(void)
  */
 void test_two_elevators_with_preset_values(void)
 {
-    int test_user_floor_1 = 8;
-    int test_user_target_floor_1 = 6;
-    int test_direction_1 = DIR_DOWN;
+    ES_INT test_user_floor_1 = 8;
+    ES_INT test_user_target_floor_1 = 6;
+    ES_INT test_direction_1 = DIR_DOWN;
 
-    int test_user_floor_2 = 2;
-    int test_user_target_floor_2 = 3;
-    int test_direction_2 = DIR_UP;
+    ES_INT test_user_floor_2 = 2;
+    ES_INT test_user_target_floor_2 = 3;
+    ES_INT test_direction_2 = DIR_UP;
 
     elevator_init();
     elevator_arr[4].current_floor = 7;
@@ -279,7 +279,7 @@ void test_two_elevators_with_preset_values(void)
     TEST_ASSERT_EQUAL(elevator_arr[7].current_floor, 5);
 }
 
-int main(void)
+ES_INT main(void)
 {
     UNITY_BEGIN();
 

@@ -2,12 +2,7 @@
 #define ELEVATOR_H
 
 #include <stdbool.h>
-
-/** @brief Symbol specifying total number of elevators in the system. */
-#define NUMBER_OF_ELEVATORS  16
-
-/** @brief Symbol specifying total number of floors in the system. */
-#define NUMBER_OF_FLOORS     20
+#include <elevator_config.h>
 
 /** @brief Symbol specifying up direction in @ref elevator_call() function. */
 #define DIR_UP                1
@@ -23,7 +18,7 @@
  *
  * @return Elevator current floor.
  */
-int get_elevator_current_floor(int elev_index);
+ES_INT get_elevator_current_floor(ES_INT elev_index);
 
 /**
  * @brief Function for getting target floor of the specified elevator.
@@ -32,7 +27,7 @@ int get_elevator_current_floor(int elev_index);
  *
  * @return Elevator target floor.
  */
-int get_elevator_target_floor(int elev_index);
+ES_INT get_elevator_target_floor(ES_INT elev_index);
 
 /** @brief Function for initializing elevator system. */
 void elevator_init(void);
@@ -44,7 +39,7 @@ void elevator_init(void);
  * @param direction  Direction of the elevator call.
  *                   Can be @ref DIR_UP or @ref DIR_DOWN.
  */
-void elevator_call(int user_floor, int direction);
+void elevator_call(ES_INT user_floor, ES_INT direction);
 
 /**
  * @brief Function for entering the elevator and choosing a desired floor.
@@ -55,7 +50,7 @@ void elevator_call(int user_floor, int direction);
  * @retval true  Operation was successful.
  * @retval false There isn't any elevator on the user floor.
  */
-bool elevator_ride(int user_floor, int target_floor);
+bool elevator_ride(ES_INT user_floor, ES_INT target_floor);
 
 /** @brief Function for advancing elevator system simulation by one step. */
 void elevator_step(void);
@@ -67,6 +62,6 @@ void elevator_step(void);
  *
  * @return True if there is an elevator on the specified floor, false otherwise.
  */
-bool elevator_on_floor_check(int floor);
+bool elevator_on_floor_check(ES_INT floor);
 
 #endif /* ELEVATOR_H */
