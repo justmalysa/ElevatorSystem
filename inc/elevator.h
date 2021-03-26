@@ -3,8 +3,14 @@
 
 #include <stdbool.h>
 
-#define NUMBER_OF_ELEVATORS 16
-#define NUMBER_OF_FLOORS 20
+#define NUMBER_OF_ELEVATORS  16
+#define NUMBER_OF_FLOORS     20
+#define DIR_UP                1
+#define DIR_DOWN              0
+
+int get_elevator_current_floor(int floor_number);
+
+int get_elevator_target_floor(int floor_number);
 
 void elevator_init(void);
 
