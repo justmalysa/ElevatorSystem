@@ -279,6 +279,227 @@ void test_two_elevators_with_preset_values(void)
     TEST_ASSERT_EQUAL(elevator_arr[7].current_floor, 5);
 }
 
+/**
+ * @brief Function for checking single elevator operation for two passengers entering elevator on same floor.
+ *
+ * Test calls elevator to specified floor.
+ * After arrival, two passengers enter the elevator and choose different floors.
+ */
+void test_one_elevator_two_passengers_same_ride_floor(void)
+{
+    elevator_init();
+
+    ES_INT user_floor = 3;
+    ES_INT target_floor_1 = 5;
+    ES_INT target_floor_2 = 7;
+    elevator_call(user_floor, DIR_UP);
+
+    elevator_step();
+    elevator_step();
+    TEST_ASSERT_FALSE(elevator_on_floor_check(user_floor));
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(user_floor));
+
+    TEST_ASSERT(elevator_ride(user_floor, target_floor_1));
+    TEST_ASSERT(elevator_ride(user_floor, target_floor_2));
+
+    elevator_step();
+    TEST_ASSERT_FALSE(elevator_on_floor_check(target_floor_1));
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(target_floor_1));
+
+    elevator_step();
+    TEST_ASSERT_FALSE(elevator_on_floor_check(target_floor_2));
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(target_floor_2));
+}
+
+/**
+ * @brief Function for checking single elevator operation for two passengers entering elevator on different floor.
+ *
+ * Test calls elevator to specified floor.
+ * After arrival, one of the passengers enter the elevator.
+ * Then another passenger calls the elevator from floor that is on the way of the previously called elevator.
+ * Elevator stops to handle second passenger on his floor and then proceeds to go to target floors of both passengers.
+ */
+void test_one_elevator_two_passengers_different_ride_floor(void)
+{
+    elevator_init();
+
+    ES_INT user_floor_1 = 1;
+    ES_INT user_floor_2 = 3;
+    ES_INT target_floor_1 = 7;
+    ES_INT target_floor_2 = 5;
+
+    elevator_call(user_floor_1, DIR_UP);
+
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(user_floor_1));
+    TEST_ASSERT(elevator_ride(user_floor_1, target_floor_1));
+
+    elevator_call(user_floor_2, DIR_UP);
+
+    elevator_step();
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(user_floor_2));
+    TEST_ASSERT(elevator_ride(user_floor_2, target_floor_2));
+
+    elevator_step();
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(target_floor_2));
+
+    elevator_step();
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(target_floor_1));
+}
+
+/**
+ * @brief Function for checking single elevator operation for two passengers but one of them chooses incorrect direction.
+ *
+ * Test calls elevator to specified floor.
+ * After arrival, one of the passengers enter the elevator and chooses target floor that matches previously chosen direction.
+ * Another passenger also attempts to enter the elevator, but it does not match the elevator direction.
+ */
+void test_one_elevator_two_passengers_wrong_dir(void)
+{
+    elevator_init();
+
+    ES_INT user_floor = 3;
+    ES_INT target_floor_1 = 5;
+    ES_INT target_floor_2 = 2;
+    elevator_call(user_floor, DIR_UP);
+
+    elevator_step();
+    elevator_step();
+    TEST_ASSERT_FALSE(elevator_on_floor_check(user_floor));
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(user_floor));
+
+    TEST_ASSERT_TRUE(elevator_ride(user_floor, target_floor_1));
+    TEST_ASSERT_FALSE(elevator_ride(user_floor, target_floor_2));
+
+    elevator_step();
+    TEST_ASSERT_FALSE(elevator_on_floor_check(target_floor_1));
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(target_floor_1));
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(target_floor_1));
+}
+
+/**
+ * @brief Function for checking whether elevator can switch direction after reaching its top-most target floor.
+ *
+ * Test calls elevator to specified floor.
+ * After arrival, one of the passengers enter the elevator and chooses target floor.
+ * After arriving on target floor, another passenger enters the elevator and wishes to go downwards.
+ */
+void test_one_elevator_two_passengers_dir_switch(void)
+{
+    elevator_init();
+
+    ES_INT user_floor_1 = 3;
+    ES_INT user_floor_2 = 5;
+    ES_INT target_floor_1 = 5;
+    ES_INT target_floor_2 = 2;
+
+    elevator_call(user_floor_1, DIR_UP);
+
+    elevator_step();
+    elevator_step();
+    TEST_ASSERT_FALSE(elevator_on_floor_check(user_floor_1));
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(user_floor_1));
+
+    TEST_ASSERT_TRUE(elevator_ride(user_floor_1, target_floor_1));
+
+    elevator_step();
+    TEST_ASSERT_FALSE(elevator_on_floor_check(target_floor_1));
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(target_floor_1));
+
+    TEST_ASSERT_TRUE(elevator_ride(user_floor_2, target_floor_2));
+    elevator_step();
+    elevator_step();
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(target_floor_2));
+}
+
+/**
+ * @brief Function for checking whether elevator correctly handles being called but not being ridden.
+ *
+ * Test calls elevator to specified floor.
+ * After arrival, one passenger enter the elevator and chooses target floor.
+ * At the same time another passenger calls the elevator to the floor
+ * that matches direction of an elevator already moving.
+ * Elevator tries to handle the call, but after arriving second passenger does not enter the elevator.
+ * On next simulation step elevator should continue its journey with first passenger.
+ */
+void test_one_elevator_two_passengers_missed_ride(void)
+{
+    elevator_init();
+
+    ES_INT user_floor_1 = 1;
+    ES_INT user_floor_2 = 3;
+    ES_INT target_floor_1 = 7;
+    ES_INT target_floor_2 = 5;
+
+    elevator_call(user_floor_1, DIR_UP);
+
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(user_floor_1));
+    TEST_ASSERT(elevator_ride(user_floor_1, target_floor_1));
+
+    elevator_call(user_floor_2, DIR_UP);
+
+    elevator_step();
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(user_floor_2));
+    /* Second user does not enter elevator despite calling it. */
+
+    elevator_step();
+    elevator_step();
+    TEST_ASSERT_FALSE(elevator_on_floor_check(target_floor_2));
+
+    elevator_step();
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(target_floor_1));
+}
+
+/**
+ * @brief Function for checking whether passenger can enter the elevator that wasn't called and is in motion.
+ *
+ * Test calls elevator to specified floor.
+ * After arrival, one passenger enter the elevator and chooses target floor.
+ * During the travel, another passenger tries to enter the elevator that passes its floor,
+ * without prior call.
+ */
+void test_enter_non_called_non_idle_elevator(void)
+{
+    elevator_init();
+
+    ES_INT user_floor_1 = 3;
+    ES_INT user_floor_2 = 4;
+    ES_INT target_floor_1 = 5;
+    ES_INT target_floor_2 = 6;
+
+    elevator_call(user_floor_1, DIR_UP);
+    elevator_step();
+    elevator_step();
+    elevator_step();
+
+    TEST_ASSERT_TRUE(elevator_on_floor_check(user_floor_1));
+    TEST_ASSERT_TRUE(elevator_ride(user_floor_1, target_floor_1));
+
+    elevator_step();
+
+    TEST_ASSERT_FALSE(elevator_on_floor_check(user_floor_2));
+
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(target_floor_1));
+    elevator_step();
+    TEST_ASSERT_TRUE(elevator_on_floor_check(target_floor_1));
+}
+
 ES_INT main(void)
 {
     UNITY_BEGIN();
@@ -291,6 +512,12 @@ ES_INT main(void)
     RUN_TEST(test_three_elevators_with_default_values);
     RUN_TEST(test_one_elevator_with_preset_values);
     RUN_TEST(test_two_elevators_with_preset_values);
+    RUN_TEST(test_one_elevator_two_passengers_same_ride_floor);
+    RUN_TEST(test_one_elevator_two_passengers_different_ride_floor);
+    RUN_TEST(test_one_elevator_two_passengers_wrong_dir);
+    RUN_TEST(test_one_elevator_two_passengers_dir_switch);
+    RUN_TEST(test_one_elevator_two_passengers_missed_ride);
+    RUN_TEST(test_enter_non_called_non_idle_elevator);
 
     return UNITY_END();
 }
