@@ -9,7 +9,6 @@ set_target_properties(unit_test PROPERTIES
 set(PROJECT_ROOT_DIR "..")
 
 target_sources(unit_test PRIVATE
-    ${PROJECT_ROOT_DIR}/src
     ${PROJECT_ROOT_DIR}/tests/test_cases.c
     ${PROJECT_ROOT_DIR}/tests/unity/unity.c
 )
